@@ -1,3 +1,4 @@
+import time
 import unittest
 from audio_processing import AudioExtractor
 from timer import Timer
@@ -6,11 +7,12 @@ from render import Renderer
 
 def main() -> None:
     FRAMERATE = 44100
-    NUM_OF_CONSEQUENT_WINDOWS_PER_SECOND = 50
+    NUM_OF_CONSEQUENT_WINDOWS_PER_SECOND = 25
     frame_size = int(FRAMERATE / NUM_OF_CONSEQUENT_WINDOWS_PER_SECOND)
 
     audio = AudioExtractor('audio_data')
-    analyzer = AudioAnalyzer(freq_mode='fourier', framerate=FRAMERATE)
+    analyzer = AudioAnalyzer(freq_mode='fourier', vol_mode="rms", framerate=FRAMERATE)
+    time.sleep(0.75) # for synchronization purposes
     timer = Timer()
     renderer = Renderer()
 
@@ -25,8 +27,6 @@ def main() -> None:
         # # TODO:
         # renderer.change_left_color(get_color_from_volume())
         # renderer.change_right_color(get_color_from_freq())
-        #
-        # And look about information on getting mean volume
 
         print(f"Average Volume: {avg_volume}, Average Frequency: {freq}")
 

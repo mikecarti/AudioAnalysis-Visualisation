@@ -6,6 +6,7 @@ from audio_processing import AudioExtractor
 from timer import Timer
 from audio_analysis import AudioAnalyzer
 from render import Renderer
+from colorizer import *
 
 
 class TestAudioExtractor(unittest.TestCase):
@@ -46,7 +47,7 @@ class TestTimer(unittest.TestCase):
 class TestAudioAnalyzer(unittest.TestCase):
     def test_fft_freq_estimator(self):
         frate = 44100
-        f = AudioAnalyzer(freq_mode="fourier", framerate=frate)
+        f = AudioAnalyzer(freq_mode="fourier", vol_mode="", framerate=frate)
         frames = [-2, 2] * (frate // 2)
         estimated_frequency = f.estimate_freq(frames)
         self.assertEqual(estimated_frequency, frate // 2)
@@ -55,9 +56,9 @@ class TestAudioAnalyzer(unittest.TestCase):
         estimated_frequency = f.estimate_freq(frames)
         self.assertEqual(estimated_frequency, frate // 3)
 
-    def test_vol_estimator(self):
+    def test_simple_vol_estimator(self):
         frate = 44100
-        f = AudioAnalyzer(freq_mode="", framerate=frate)
+        f = AudioAnalyzer(freq_mode="", vol_mode="simple", framerate=frate)
         frames = [0, 2] * (frate // 2)
         estimated_volume = f.estimate_volume(frames)
         self.assertEqual(estimated_volume, 1)
@@ -75,6 +76,18 @@ class TestRenderer(unittest.TestCase):
         surf.change_color(expected_color)
         actual_color = surf.get_color_of_surface()[:3]
         self.assertEqual(expected_color, actual_color)
+
+
+class TestColorizer(unittest.TestCase):
+    def test_normalizer_0_1(self):
+        a = 1123412525
+        self.assertTrue(0 <= normalize(a) <= 1)
+
+    def test_get_color(self):
+        col = get_color(0.5)
+        self.assertTrue(len(col) == 3)
+        self.assertTrue(type(col) is list)
+        print("Color:" , col)
 
 
 if __name__ == '__main__':

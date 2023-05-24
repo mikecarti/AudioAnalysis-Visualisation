@@ -6,3 +6,4 @@ class Timer():
 
     def get_elapsed(self):
         return time.time() - self.start_time
+
