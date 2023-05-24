@@ -72,10 +72,10 @@ class AudioExtractor:
         thr = threading.Thread(target=play_stream, args=(data, chunk), kwargs={})
         thr.start()
 
-    def get_frames_from_range(self, frames_window: tuple):
+    def get_frames_from_range(self, frames_window: tuple) -> np.ndarray:
         if frames_window[0] < 0 or frames_window[1] > len(self.decoded_wave):
             raise Exception("frame window out of range: " + str(frames_window))
-        return self.decoded_wave[frames_window[0]:frames_window[1]]
+        return self.decoded_wave[frames_window[0]:frames_window[1]].to_numpy()
 
     def quit(self):
         # stop stream

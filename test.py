@@ -1,8 +1,10 @@
 import unittest
 import pandas as pd
+from time import sleep
+
 from audio_processing import AudioExtractor
 from timer import Timer
-from time import sleep
+from audio_analysis import AudioAnalyzer
 
 
 class TestAudioExtractor(unittest.TestCase):
@@ -28,9 +30,8 @@ class TestAudioExtractor(unittest.TestCase):
 
         window = (-100, 3000)
         self.assertRaises(Exception, error_catching, window)
-        window = (100, 100000)
+        window = (100, 10 ** 100)
         self.assertRaises(Exception, error_catching, window)
-
 
 
 class TestTimer(unittest.TestCase):
@@ -40,6 +41,25 @@ class TestTimer(unittest.TestCase):
         sleep(1)
         self.assertAlmostEqual(timer.get_elapsed(), 1, places=2)
 
+
+class TestAudioAnalyzer(unittest.TestCase):
+    def test_fft_freq_estimator(self):
+        frate = 44100
+        f = AudioAnalyzer(freq_mode="fourier", framerate=frate)
+        frames = [-2, 2] * (frate // 2)
+        estimated_frequency = f.estimate_freq(frames)
+        self.assertEqual(estimated_frequency, frate // 2)
+
+        frames = [-2, -1, 2] * (frate // 3)
+        estimated_frequency = f.estimate_freq(frames)
+        self.assertEqual(estimated_frequency, frate // 3)
+
+    def test_vol_estimator(self):
+        frate = 44100
+        f = AudioAnalyzer(freq_mode="", framerate=frate)
+        frames = [0, 2] * (frate // 2)
+        estimated_volume = f.estimate_volume(frames)
+        self.assertEqual(estimated_volume, 1)
 
 if __name__ == '__main__':
     unittest.main()
