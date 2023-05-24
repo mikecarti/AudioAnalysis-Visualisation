@@ -1,10 +1,11 @@
 import unittest
-import pandas as pd
+import numpy as np
 from time import sleep
 
 from audio_processing import AudioExtractor
 from timer import Timer
 from audio_analysis import AudioAnalyzer
+from render import Renderer
 
 
 class TestAudioExtractor(unittest.TestCase):
@@ -22,7 +23,7 @@ class TestAudioExtractor(unittest.TestCase):
         window = (9894, 44100)
         frames = self.audio.get_frames_from_range(frames_window=window)
         self.assertTrue(len(frames) == window[1] - window[0])
-        self.assertTrue(type(frames) == pd.Series)
+        self.assertTrue(type(frames) == np.ndarray)
 
     def test_when_window_is_out_of_bounds_raises_error(self):
         def error_catching(w):
@@ -60,6 +61,21 @@ class TestAudioAnalyzer(unittest.TestCase):
         frames = [0, 2] * (frate // 2)
         estimated_volume = f.estimate_volume(frames)
         self.assertEqual(estimated_volume, 1)
+
+
+class TestRenderer(unittest.TestCase):
+    def test_init(self):
+        r = Renderer()
+        self.assertTrue(True)
+
+    def test_color_change(self):
+        r = Renderer()
+        expected_color = (255, 0, 0)
+        surf = r.left_surf
+        surf.change_color(expected_color)
+        actual_color = surf.get_color_of_surface()[:3]
+        self.assertEqual(expected_color, actual_color)
+
 
 if __name__ == '__main__':
     unittest.main()

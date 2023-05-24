@@ -21,6 +21,13 @@ def main() -> None:
         frames = audio.get_frames_from_range(frames_window=window)
         avg_volume = analyzer.estimate_volume(frames)
         freq = analyzer.estimate_freq(frames)
+
+        # # TODO:
+        # renderer.change_left_color(get_color_from_volume())
+        # renderer.change_right_color(get_color_from_freq())
+        #
+        # And look about information on getting mean volume
+
         print(f"Average Volume: {avg_volume}, Average Frequency: {freq}")
 
 if __name__ == '__main__':
