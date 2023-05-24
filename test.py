@@ -89,6 +89,10 @@ class TestColorizer(unittest.TestCase):
         self.assertTrue(type(col) is list)
         print("Color:" , col)
 
+    def test_number_to_normalized(self):
+        norm = normalize(4252525)
+        self.assertTrue(0 <= norm <= 1)
+
 
 if __name__ == '__main__':
     unittest.main()
