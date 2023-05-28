@@ -7,7 +7,7 @@ import threading
 import math
 from scipy.io.wavfile import read
 from os.path import join as join_path
-from typing import Dict
+from typing import *
 from time import sleep
 
 
@@ -16,6 +16,7 @@ class AudioExtractor:
         self.quiting = False
         self.stream = None
         self.framerate = None
+        self.audio_file_path = None
         self.audio_dir = join_path(os.curdir, audio_path)
         self.features = self.collect_trackout()
         # for case of one wav file in audio folder
@@ -25,7 +26,7 @@ class AudioExtractor:
         self.test_features()
         self.test_wave = list(self.features.values())[0]
 
-        self.play_audio()
+        self.play_audio(file_names=list(self.features.keys()))
 
     def collect_trackout(self) -> Dict:
         audio_dir = self.audio_dir
@@ -48,35 +49,58 @@ class AudioExtractor:
         for col_name in self.features.keys():
             print(col_name)
 
-    def play_audio(self):
+    def play_audio(self, file_names):
         # define stream chunk
         chunk = 1024
+        paths = []
+        waves = []
+        streams = []
+        data_waves = []
+        print("File names: " + str(file_names))
+        for file_name in file_names:
+            paths.append(join_path(self.audio_dir, file_name))
+        for path in paths:
+            waves.append(wave.open(path, "rb"))
 
-        # open a wav format music
-        f = wave.open(r"./audio_data/sine.wav", "rb")
         # get PyAudio instance
         p = self.player
         # open stream
-        self.stream = p.open(format=p.get_format_from_width(f.getsampwidth()),
-                             channels=f.getnchannels(),
-                             rate=f.getframerate(),
-                             output=True)
+        for w in waves:
+            streams.append(
+                p.open(format=p.get_format_from_width(w.getsampwidth()),
+                       channels=w.getnchannels(),
+                       rate=w.getframerate(),
+                       output=True)
+            )
+            data_waves.append(w.readframes(chunk))
+
         # read data
-        data = f.readframes(chunk)
+        # TODO: reformat later code for several wave tracks
+        def play_stream(data_waves, waves, streams, chunk):
+            while not self.quiting and data_waves[0]:
+                for i in range(len(data_waves)):
+                    data = data_waves[i]
+                    wave_file = waves[i]
+                    streams[i].write(data)
+                    data_waves[i] = wave_file.readframes(chunk)
 
-        def play_stream(data, chunk):
-            while not self.quiting and data:
-                self.stream.write(data)
-                data = f.readframes(chunk)
-
-        thr = threading.Thread(target=play_stream, args=(data, chunk), kwargs={})
+        thr = threading.Thread(target=play_stream, args=(data_waves, waves, streams, chunk), kwargs={})
         thr.start()
 
-    def get_frames_from_range(self, frames_window: tuple) -> np.ndarray:
-        if frames_window[0] < 0 or frames_window[1] > len(self.decoded_wave):
-            raise Exception("frame window out of range: " + str(frames_window))
-        return self.decoded_wave[frames_window[0]:frames_window[1]].to_numpy()
+    def get_number_of_tracks(self):
+        return len(self.features.values())
 
+    def get_frames_from_range(self, frames_window: tuple, decoded_wave: pd.Series) -> np.ndarray:
+        if frames_window[0] < 0 or frames_window[1] > len(decoded_wave):
+            raise Exception("frame window out of range: " + str(frames_window))
+        return decoded_wave[frames_window[0]:frames_window[1]].to_numpy()
+
+
+    def get_frames_for_each_track(self, frames_window: tuple) -> List[np.ndarray]:
+        frames_for_each_track = list()
+        for decoded_wave in list( self.features.values() ):
+            frames_for_each_track.append( self.get_frames_from_range(frames_window, decoded_wave) )
+        return frames_for_each_track
     def quit(self):
         # stop stream
         self.quiting = True

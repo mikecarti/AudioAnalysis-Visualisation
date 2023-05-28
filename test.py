@@ -1,18 +1,17 @@
 import unittest
-import numpy as np
 from time import sleep
 
 from audio_processing import AudioExtractor
 from timer import Timer
 from audio_analysis import AudioAnalyzer
-from render import Renderer
 from colorizer import *
+from stick_render import StickRenderer
 
 
 class TestAudioExtractor(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        audio = AudioExtractor('audio_data')
+        audio = AudioExtractor('audio_data1')
         audio.quit()
         cls.audio = audio
 
@@ -66,33 +65,38 @@ class TestAudioAnalyzer(unittest.TestCase):
 
 class TestRenderer(unittest.TestCase):
     def test_init(self):
-        r = Renderer()
-        self.assertTrue(True)
-
-    def test_color_change(self):
-        r = Renderer()
-        expected_color = (255, 0, 0)
-        surf = r.left_surf
-        surf.change_color(expected_color)
-        actual_color = surf.get_color_of_surface()[:3]
-        self.assertEqual(expected_color, actual_color)
+        s = StickRenderer()
 
 
 class TestColorizer(unittest.TestCase):
     def test_normalizer_0_1(self):
         a = 1123412525
-        self.assertTrue(0 <= normalize(a) <= 1)
+        self.assertTrue(0 <= normalize(a, min_x=0, max_x=10 ** 12) <= 1)
 
     def test_get_color(self):
         col = get_color(0.5)
         self.assertTrue(len(col) == 3)
         self.assertTrue(type(col) is list)
-        print("Color:" , col)
+        print("Color:", col)
 
     def test_number_to_normalized(self):
-        norm = normalize(4252525)
+        norm = normalize(4252525, min_x=0, max_x=10 ** 8)
         self.assertTrue(0 <= norm <= 1)
 
+
+class TestStickRender(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.renderer = StickRenderer()
+
+    def test_draw_line(self):
+        pos_1 = (0, 0)
+        pos_2 = (50, 50)
+        self.renderer.draw_line(pos_1, pos_2)
+        sleep(2)
+
+    def test_set_levels(self):
+        self.renderer.set_stick_levels(0.5, 0.1)
 
 if __name__ == '__main__':
     unittest.main()
