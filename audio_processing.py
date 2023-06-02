@@ -75,7 +75,6 @@ class AudioExtractor:
             data_waves.append(w.readframes(chunk))
 
         # read data
-        # TODO: reformat later code for several wave tracks
         def play_stream(data_waves, waves, streams, chunk):
             while not self.quiting and data_waves[0]:
                 for i in range(len(data_waves)):

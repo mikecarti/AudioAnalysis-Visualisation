@@ -28,7 +28,7 @@ def main() -> None:
             avg_volume = analyzer.estimate_volume(frames)
             normalized_avg_volume = normalize_volume(avg_volume)
             freq = analyzer.estimate_freq(frames)
-            normalized_freq = normalize_frequency(freq)
+            normalized_freq = normalize_frequency(freq, max_x=10000)
             render.set_stick_levels(left_level=normalized_avg_volume,
                                     right_level=normalized_freq,
                                     window_number=i)
