@@ -20,4 +20,4 @@ def normalize(x, min_x=0, max_x=10 ** 10):
 
 def get_color(normalized_x):
     jet_color = plt.cm.jet(normalized_x)[:3]
-    return [255 * x for x in jet_color]
+    return [255 * (1 - x) for x in jet_color]

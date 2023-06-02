@@ -5,7 +5,7 @@ from audio_processing import AudioExtractor
 from timer import Timer
 from audio_analysis import AudioAnalyzer
 from colorizer import *
-from stick_render import StickRenderer
+from circle_render import Renderer
 
 
 class TestAudioExtractor(unittest.TestCase):
@@ -65,7 +65,7 @@ class TestAudioAnalyzer(unittest.TestCase):
 
 class TestRenderer(unittest.TestCase):
     def test_init(self):
-        s = StickRenderer()
+        s = Renderer()
 
 
 class TestColorizer(unittest.TestCase):
@@ -87,7 +87,7 @@ class TestColorizer(unittest.TestCase):
 class TestStickRender(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.renderer = StickRenderer()
+        cls.renderer = Renderer()
 
     def test_draw_line(self):
         pos_1 = (0, 0)
