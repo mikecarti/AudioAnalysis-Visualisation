@@ -12,28 +12,23 @@ def main() -> None:
     NUM_OF_CONSEQUENT_WINDOWS_PER_SECOND = 25
     frame_size = int(FRAMERATE / NUM_OF_CONSEQUENT_WINDOWS_PER_SECOND)
 
-    audio = AudioExtractor('audio_data2')
+    audio = AudioExtractor('audio_data1')
     analyzer = AudioAnalyzer(freq_mode='fourier', vol_mode="rms", framerate=FRAMERATE)
     time.sleep(0.9)  # for synchronization purposes
     timer = Timer()
-    render = Renderer(number_of_windows=audio.get_number_of_tracks())
+    render = Renderer(n_of_objects=audio.get_number_of_tracks())
 
-    threshold = 2
-    j = 0
     while True:
         time_elapsed = timer.get_elapsed()
         cur_wav_frame_index = audio.time_to_frame_index(time=time_elapsed)
         window = (cur_wav_frame_index, cur_wav_frame_index + frame_size)
 
         frames_for_each_track = audio.get_frames_for_each_track(frames_window=window)
-        j += 1
-        if j == threshold:
-            render.prepare_screen()
-            j = 0
+        render.prepare_screen( )
 
         for i, frames in enumerate(frames_for_each_track):
             avg_volume = analyzer.estimate_volume(frames)
-            normalized_avg_volume = normalize_volume(avg_volume, max_x=20000)
+            normalized_avg_volume = normalize_volume(avg_volume)
             freq = analyzer.estimate_freq(frames)
             normalized_freq = normalize_frequency(freq, max_x=1000)
             render.move_object(speed=normalized_avg_volume,

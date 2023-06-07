@@ -94,12 +94,12 @@ class AudioExtractor:
             raise Exception("frame window out of range: " + str(frames_window))
         return decoded_wave[frames_window[0]:frames_window[1]].to_numpy()
 
-
     def get_frames_for_each_track(self, frames_window: tuple) -> List[np.ndarray]:
         frames_for_each_track = list()
-        for decoded_wave in list( self.features.values() ):
-            frames_for_each_track.append( self.get_frames_from_range(frames_window, decoded_wave) )
+        for decoded_wave in list(self.features.values()):
+            frames_for_each_track.append(self.get_frames_from_range(frames_window, decoded_wave))
         return frames_for_each_track
+
     def quit(self):
         # stop stream
         self.quiting = True
@@ -171,3 +171,5 @@ class Wave:
 
         frames_series = pd.Series(data.flatten())
         return frames_series
+
+

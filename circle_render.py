@@ -41,7 +41,7 @@ class Circle():
 
 
 class Renderer:
-    def __init__(self, number_of_windows):
+    def __init__(self, n_of_objects):
         pg.init()
         self.global_width = 500
         self.global_height = 500
@@ -51,7 +51,7 @@ class Renderer:
         self.circle_color = (255, 0, 255)
 
         self.objects = []
-        self.create_circles(n=3)
+        self.create_circles(n=n_of_objects)
 
     def update(self):
         pg.display.update()
