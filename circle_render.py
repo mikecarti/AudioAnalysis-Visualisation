@@ -29,14 +29,22 @@ class Circle():
         self.x = self.x + self.h_velocity * self.h_coef
         self.y = self.y + self.v_velocity * self.v_coef
 
+        # if self.x > self.max_x:
+        #     self.x = 0
+        # if self.y > self.max_y:
+        #     self.y = 0
+        # if self.x < 0:
+        #     self.x = self.max_x
+        # if self.y < 0:
+        #     self.y = self.max_y
         if self.x > self.max_x:
-            self.x = 0
+            self.h_coef = - self.h_coef
         if self.y > self.max_y:
-            self.y = 0
+            self.v_coef = - self.v_coef
         if self.x < 0:
-            self.x = self.max_x
+            self.h_coef = - self.h_coef
         if self.y < 0:
-            self.y = self.max_y
+            self.v_coef = - self.v_coef
         return int(self.x), int(self.y)
 
 
@@ -65,11 +73,11 @@ class Renderer:
             circle = Circle(pos, max_x=self.global_width, max_y=self.global_height,
                             angle_in_rad=random.randrange(0, FULL_CIRCLE))
             self.objects.append(circle)
-            pg.draw.circle(self.screen, self.circle_color, pos, 15, 1)
+            pg.draw.circle(self.screen, self.circle_color, pos, 30, 1)
         self.update()
 
     def move_object(self, speed, color, object_number):
         circle = self.objects[object_number]
         circle.set_velocity(speed, speed)
         new_circle_pos = circle.move()
-        pg.draw.circle(self.screen, color, new_circle_pos, 15)
+        pg.draw.circle(self.screen, color, new_circle_pos, 30)

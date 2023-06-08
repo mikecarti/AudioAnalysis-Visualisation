@@ -24,7 +24,7 @@ def main() -> None:
         window = (cur_wav_frame_index, cur_wav_frame_index + frame_size)
 
         frames_for_each_track = audio.get_frames_for_each_track(frames_window=window)
-        render.prepare_screen( )
+        render.prepare_screen()
 
         for i, frames in enumerate(frames_for_each_track):
             avg_volume = analyzer.estimate_volume(frames)
